@@ -151,6 +151,11 @@ require('lazy').setup({
     build = ':TSUpdate',
   },
 
+  {
+    "folke/todo-comments.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    opts = {}
+  }
 }, {})
 
 -- Theme stuff
