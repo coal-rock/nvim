@@ -26,6 +26,7 @@ vim.opt.rtp:prepend(lazypath)
 --    as they will be available in your neovim runtime.
 require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
+  'elkowar/yuck.vim',
 
   -- Git related plugins
   'tpope/vim-fugitive',
@@ -116,9 +117,10 @@ require('lazy').setup({
     'lukas-reineke/indent-blankline.nvim',
     -- Enable `lukas-reineke/indent-blankline.nvim`
     -- See `:help indent_blankline.txt`
+    main = "ibl",
     opts = {
-      char = '┊',
-      show_trailing_blankline_indent = false,
+      -- char = '┊',
+      -- show_trailing_blankline_indent = false,
     },
   },
 
@@ -157,33 +159,42 @@ require('lazy').setup({
   },
   'ThePrimeagen/vim-be-good',
 
-  {
-    "folke/noice.nvim",
-    event = "VeryLazy",
-    opts = {
-      views = {
-        cmdline_popup = {
-          border = {
-            style = "none",
-            padding = { 1, 1 },
-          },
-          filter_options = {},
-          win_options = {
-            winhighlight = "NormalFloat:NormalFloat,FloatBorder:FloatBorder",
-          },
-        }
-      }
-    },
-
-    dependencies = {
-      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
-      "MunifTanjim/nui.nvim",
-      -- OPTIONAL:
-      --   `nvim-notify` is only needed, if you want to use the notification view.
-      --   If not available, we use `mini` as the fallback
-      "rcarriga/nvim-notify",
-    }
-  }
+  -- {
+  --   "folke/noice.nvim",
+  --   event = "VeryLazy",
+  --   opts = {
+  --     views = {
+  --       cmdline_popup = {
+  --         border = {
+  --           style = "none",
+  --           padding = { 1, 1 },
+  --         },
+  --         filter_options = {},
+  --         win_options = {
+  --           winhighlight = "NormalFloat:NormalFloat,FloatBorder:FloatBorder",
+  --         },
+  --       }
+  --     }
+  --   },
+  --   dependencies = {
+  --     -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+  --     "MunifTanjim/nui.nvim",
+  --     -- OPTIONAL:
+  --     --   `nvim-notify` is only needed, if you want to use the notification view.
+  --     --   If not available, we use `mini` as the fallback
+  --     -- "rcarriga/nvim-notify",
+  --   },
+  --   messages = {
+  --     -- NOTE: If you enable messages, then the cmdline is enabled automatically.
+  --     -- This is a current Neovim limitation.
+  --     enabled = false,       -- enables the Noice messages UI
+  --     view = "none",         -- default view for messages
+  --     view_error = "none",   -- view for errors
+  --     view_warn = "none",    -- view for warnings
+  --     view_history = "none", -- view for :messages
+  --     view_search = "none",  -- view for search count messages. Set to `false` to disable
+  --   },
+  -- }
   -- lazy.nvim
 
 }, {})
@@ -262,6 +273,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- Configure telescope
 require('telescope').setup {
   defaults = {
+    file_ignore_patterns = { "tests/" },
     mappings = {
       i = {
         ['<Esc>'] = 'close',
