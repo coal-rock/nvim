@@ -157,46 +157,29 @@ require('lazy').setup({
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = {}
   },
+  {
+    "luckasRanarison/tailwind-tools.nvim",
+    name = "tailwind-tools",
+    build = ":UpdateRemotePlugins",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-telescope/telescope.nvim", -- optional
+      "neovim/nvim-lspconfig",         -- optional
+    },
+    opts = {}                          -- your configuration
+  },
   'ThePrimeagen/vim-be-good',
-
-  -- {
-  --   "folke/noice.nvim",
-  --   event = "VeryLazy",
-  --   opts = {
-  --     views = {
-  --       cmdline_popup = {
-  --         border = {
-  --           style = "none",
-  --           padding = { 1, 1 },
-  --         },
-  --         filter_options = {},
-  --         win_options = {
-  --           winhighlight = "NormalFloat:NormalFloat,FloatBorder:FloatBorder",
-  --         },
-  --       }
-  --     }
-  --   },
-  --   dependencies = {
-  --     -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
-  --     "MunifTanjim/nui.nvim",
-  --     -- OPTIONAL:
-  --     --   `nvim-notify` is only needed, if you want to use the notification view.
-  --     --   If not available, we use `mini` as the fallback
-  --     -- "rcarriga/nvim-notify",
-  --   },
-  --   messages = {
-  --     -- NOTE: If you enable messages, then the cmdline is enabled automatically.
-  --     -- This is a current Neovim limitation.
-  --     enabled = false,       -- enables the Noice messages UI
-  --     view = "none",         -- default view for messages
-  --     view_error = "none",   -- view for errors
-  --     view_warn = "none",    -- view for warnings
-  --     view_history = "none", -- view for :messages
-  --     view_search = "none",  -- view for search count messages. Set to `false` to disable
-  --   },
-  -- }
-  -- lazy.nvim
-
+  'nvim-java/nvim-java',
+  {
+    "S1M0N38/love2d.nvim",
+    cmd = "LoveRun",
+    opts = {},
+    keys = {
+      { "<leader>v",  ft = "lua",          desc = "LÖVE" },
+      { "<leader>vv", "<cmd>LoveRun<cr>",  ft = "lua",   desc = "Run LÖVE" },
+      { "<leader>vs", "<cmd>LoveStop<cr>", ft = "lua",   desc = "Stop LÖVE" },
+    },
+  }
 }, {})
 
 -- Theme stuff
@@ -273,7 +256,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- Configure telescope
 require('telescope').setup {
   defaults = {
-    file_ignore_patterns = { "tests/" },
+    file_ignore_patterns = { "tests/", "node_modules", "target/" },
     mappings = {
       i = {
         ['<Esc>'] = 'close',
@@ -303,11 +286,13 @@ end, { desc = '[/] Fuzzily search in current buffer' })
 vim.keymap.set('n', '<Esc>', function() vim.cmd 'noh' end)
 
 -- Hacky, labels prefix groups
+vim.keymap.set('n', '<leader>c', function() end, { desc = 'Code' })
 vim.keymap.set('n', '<leader>s', function() end, { desc = 'Search' })
 vim.keymap.set('n', '<leader>r', function() end, { desc = 'Rename' })
-vim.keymap.set('n', '<leader>w', function() end, { desc = 'Window' })
+vim.keymap.set('n', '<leader>w', function() end, { desc = 'Workspace' })
 
 vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>sb', require('telescope.builtin').buffers, { desc = '[S]earch [B]uffers' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
@@ -381,8 +366,6 @@ require('nvim-treesitter.configs').setup {
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 -- LSP things
 local on_attach = function(_, bufnr)
@@ -414,6 +397,9 @@ local on_attach = function(_, bufnr)
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
   nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
+  nmap('J', vim.diagnostic.open_float, 'Hover Error')
+  nmap('<C-j>', vim.diagnostic.setloclist, 'Show Errors')
+
   -- Lesser used LSP functionality
   nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
   nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
@@ -434,7 +420,7 @@ local servers = {
   -- gopls = {},
   -- pyright = {},
   rust_analyzer = {},
-  tsserver = {},
+  -- tsserver = {},
 
   lua_ls = {
     Lua = {
@@ -446,6 +432,9 @@ local servers = {
 
 -- Setup neovim lua configuration
 require('neodev').setup()
+
+-- Java setup
+require('java').setup()
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -467,6 +456,8 @@ mason_lspconfig.setup_handlers {
     }
   end,
 }
+
+require('lspconfig').jdtls.setup({})
 
 -- Autocompletion setup
 local cmp = require 'cmp'
@@ -514,6 +505,20 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
+-- remaps esc to normal mode from terminal
+-- tnoremap <Esc> <C-\><C-n>
+vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]])
+
+-- The following are hacks for neovide:
+if vim.g.neovide == true then
+  vim.api.nvim_set_keymap("n", "<C-=>", ":lua vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + 0.1<CR>",
+    { silent = true })
+  vim.api.nvim_set_keymap("n", "<C-->", ":lua vim.g.neovide_scale_factor = vim.g.neovide_scale_factor - 0.1<CR>",
+    { silent = true })
+  vim.api.nvim_set_keymap("n", "<C-0>", ":lua vim.g.neovide_scale_factor = 1<CR>", { silent = true })
+end
+
 
 -- modeline
 -- vim: ts=2 sts=2 sw=2 et
