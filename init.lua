@@ -1,11 +1,8 @@
--- Set <space> as the leader key
--- See `:help mapleader`
---  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
+-- Leader keys
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
--- Install package manager
---    https://github.com/folke/lazy.nvim
---    `:help lazy.nvim.txt` for more info
+
+-- Lazy setup --
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system {
@@ -19,11 +16,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- NOTE: Here is where you install your plugins.
---  You can configure plugins using the `config` key.
---
---  You can also configure plugins after the setup call,
---    as they will be available in your neovim runtime.
+-- Package Table --
 require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
   'elkowar/yuck.vim',
@@ -39,7 +32,16 @@ require('lazy').setup({
     event = "InsertEnter",
     opts = {} -- this is equalent to setup({}) function
   },
-
+  {
+    'nvimdev/dashboard-nvim',
+    event = 'VimEnter',
+    config = function()
+      require('dashboard').setup {
+        -- config
+      }
+    end,
+    dependencies = { { 'nvim-tree/nvim-web-devicons' } }
+  },
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
@@ -134,7 +136,6 @@ require('lazy').setup({
       },
     },
   },
-
   {
     -- Add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',
@@ -146,7 +147,6 @@ require('lazy').setup({
       -- show_trailing_blankline_indent = false,
     },
   },
-
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim',         opts = {} },
 
@@ -165,7 +165,6 @@ require('lazy').setup({
       return vim.fn.executable 'make' == 1
     end,
   },
-
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
@@ -205,9 +204,6 @@ require('lazy').setup({
   }
 }, {})
 
--- Theme stuff
-vim.cmd.colorscheme 'gruvbox'
-
 -- Enable format on save (cheeky solution)
 vim.o.autoread = true
 
@@ -228,6 +224,9 @@ end
 
 vim.cmd [[autocmd BufWritePre * lua PreWriteFormat()]]
 vim.cmd [[autocmd BufWritePost * lua PostWriteFormat()]]
+
+-- The best theme of all time
+vim.cmd.colorscheme 'gruvbox'
 
 -- Set highlight on search
 vim.o.hlsearch = true
@@ -265,7 +264,7 @@ vim.o.timeoutlen = 50
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
 
--- NOTE: You should make sure your terminal supports this
+-- Beautiful, 24-bit color
 vim.o.termguicolors = true
 
 -- Make scrolloff behavior mimic Helix
@@ -546,6 +545,11 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
+-- Hide indent lines on dashboard
+require("ibl").setup({
+  exclude = { filetypes = { "dashboard" } },
+})
 
 -- remaps esc to normal mode from terminal
 -- tnoremap <Esc> <C-\><C-n>
