@@ -185,8 +185,26 @@ require('lazy').setup({
 -- Theme stuff
 vim.cmd.colorscheme 'gruvbox'
 
--- Enable format on save
-vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format()]]
+-- Enable format on save (cheeky solution)
+vim.o.autoread = true
+
+function PreWriteFormat()
+  vim.lsp.buf.format()
+end
+
+function PostWriteFormat()
+  -- Dioxus support
+  local file = io.open("Dioxus.toml", "r")
+  local is_dioxus = file ~= nil and io.close(file)
+
+  if is_dioxus then
+    os.execute('dx fmt') -- format
+    vim.cmd [[e]]        -- reload
+  end
+end
+
+vim.cmd [[autocmd BufWritePre * lua PreWriteFormat()]]
+vim.cmd [[autocmd BufWritePost * lua PostWriteFormat()]]
 
 -- Set highlight on search
 vim.o.hlsearch = true
