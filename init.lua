@@ -206,7 +206,20 @@ require('lazy').setup({
     'saecki/crates.nvim',
     tag = 'stable',
     config = function()
-      require('crates').setup()
+      require('crates').setup({
+        lsp = {
+          enabled = true,
+          on_attach = on_attach,
+          actions = true,
+          completion = true,
+          hover = true,
+        },
+        completion = {
+          cmp = {
+            enabled = true,
+          },
+        }
+      })
     end,
   }
 }, {})
@@ -415,7 +428,7 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous dia
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 
 -- LSP things
-local on_attach = function(_, bufnr)
+on_attach = function(_, bufnr)
   -- NOTE: Remember that lua is a real programming language, and as such it is possible
   -- to define small helper and utility functions so you don't have to repeat yourself
   -- many times.
@@ -550,6 +563,7 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'crates' },
   },
 }
 
