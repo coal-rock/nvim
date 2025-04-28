@@ -19,6 +19,9 @@ vim.g.maplocalleader = "\\"
 
 ---- Plugin Installation ----
 require("lazy").setup({
+    -- Automatically guess indentation width
+    { "nmac427/guess-indent.nvim", opts = {} },
+
     -- Gruvbox, sexy ass colorscheme
     "ellisonleao/gruvbox.nvim",
 
@@ -38,10 +41,10 @@ require("lazy").setup({
     "echasnovski/mini.nvim",
 
     -- -- Anyline, gives us animated indentation line
-    { 'coal-rock/anyline.nvim',  opts = {} },
+    { "coal-rock/anyline.nvim",    opts = {} },
 
     -- ToggleTerm, nice quality of life wrapper for the default Neovim terminal
-    { 'akinsho/toggleterm.nvim', opts = {} },
+    { "akinsho/toggleterm.nvim",   opts = {} },
 
     -- Pretty icons
     "nvim-tree/nvim-web-devicons",
@@ -49,31 +52,31 @@ require("lazy").setup({
     -- Mason, used for LSP installation
     "williamboman/mason.nvim",
     "williamboman/mason-lspconfig.nvim",
-    'neovim/nvim-lspconfig',
+    "neovim/nvim-lspconfig",
 
     -- Telescope, a "fuzzy finder" - does many things
-    'nvim-telescope/telescope.nvim',
+    "nvim-telescope/telescope.nvim",
 
     -- Lazydev, gives us auto-complete for the Neovim Lua API
-    { 'folke/lazydev.nvim',            ft = "lua",                                opts = {} },
+    { "folke/lazydev.nvim",            ft = "lua",                                opts = {} },
 
     -- Lualine, gives us a pretty status line
-    { 'nvim-lualine/lualine.nvim' },
+    { "nvim-lualine/lualine.nvim" },
 
     -- Nvim-autopairs, automatically matches "{" with "}"
-    { 'windwp/nvim-autopairs',         config = true },
+    { "windwp/nvim-autopairs",         config = true },
 
     -- Telescope, gives us fast, comfy fuzzy finding (search through files, lsp suggestions, etc)
-    { 'nvim-telescope/telescope.nvim', dependencies = { 'nvim-lua/plenary.nvim' } },
+    { "nvim-telescope/telescope.nvim", dependencies = { "nvim-lua/plenary.nvim" } },
 
     -- Treesitter, basically magic
     {
-        'nvim-treesitter/nvim-treesitter',
+        "nvim-treesitter/nvim-treesitter",
         dependencies = {
-            'nvim-treesitter/nvim-treesitter-textobjects',
-            'tree-sitter/tree-sitter-regex'
+            "nvim-treesitter/nvim-treesitter-textobjects",
+            "tree-sitter/tree-sitter-regex"
         },
-        build = ':TSUpdate',
+        build = ":TSUpdate",
     },
 
     -- Todo-comments, gives us:
@@ -81,7 +84,7 @@ require("lazy").setup({
     { "folke/todo-comments.nvim", opts = {} },
 
     -- Lsp-lines, gives us inline error lense
-    'https://git.sr.ht/~whynothugo/lsp_lines.nvim',
+    "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
 
     -- Noice, UI overhaul
     {
@@ -98,7 +101,7 @@ require("lazy").setup({
         version = "1.*",
         dependencies = {
             -- Snippets provider
-            'rafamadriz/friendly-snippets',
+            "rafamadriz/friendly-snippets",
         },
     },
 
@@ -138,35 +141,35 @@ require("lazy").setup({
 -- Configure lualine
 require("lualine").setup({
     options = {
-        component_separators = '',
-        section_separators = { left = '', right = '' },
+        component_separators = "",
+        section_separators = { left = "", right = "" },
     },
     sections = {
         lualine_a = {
             {
-                'mode',
+                "mode",
                 icon = { "" },
-                separator = { left = '', right = '' },
+                separator = { left = "", right = "" },
             }
         },
         lualine_b = {
-            'branch',
+            "branch",
             {
-                'diff',
-                separator = { left = '', right = '' },
+                "diff",
+                separator = { left = "", right = "" },
             },
             {
-                'diagnostics',
-                separator = { left = '', right = '' },
+                "diagnostics",
+                separator = { left = "", right = "" },
             },
         },
         lualine_c = {
             {
-                '%=',
+                "%=",
                 padding = 0,
             },
             {
-                '',
+                "",
             },
             {
                 -- Fun little hack!
@@ -174,6 +177,7 @@ require("lualine").setup({
                 -- recorded macro in the status line
                 function()
                     local path = vim.fn.expand("%:t")
+                    -- path = "i want a cigarette"
 
                     local recording_reg = vim.fn.reg_recording()
                     local macro_reg = vim.fn.reg_recorded()
@@ -191,34 +195,34 @@ require("lualine").setup({
                         return path .. " | @" .. macro_reg
                     end
 
-                    return vim.fn.expand("%:t")
+                    return path
                 end,
-                separator = { left = '', right = '' },
+                separator = { left = "", right = "" },
                 padding = 0,
                 color = {
                     fg = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "Normal" }).bg),
                     bg = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "Normal" }).fg),
                 }
             },
-            { '' },
+            { "" },
         },
         lualine_x = {},
         lualine_y = {
             {
-                'filetype',
-                separator = { left = '', right = '' },
+                "filetype",
+                separator = { left = "", right = "" },
             },
-            'lsp_status',
+            "lsp_status",
             {
-                'progress',
-                separator = { left = '', right = '' },
+                "progress",
+                separator = { left = "", right = "" },
                 padding = { left = 1, right = 1 },
             }
         },
         lualine_z = {
             {
-                'location',
-                separator = { left = '', right = '' },
+                "location",
+                separator = { left = "", right = "" },
                 padding = { left = 0, right = 1 },
             }
         }
@@ -226,22 +230,22 @@ require("lualine").setup({
 })
 
 vim.opt.showmode = false
-vim.opt.fillchars = vim.tbl_extend('force', vim.opt.fillchars:get(), {
-    stl = ' ',
-    stlnc = ' ',
+vim.opt.fillchars = vim.tbl_extend("force", vim.opt.fillchars:get(), {
+    stl = " ",
+    stlnc = " ",
 })
 
 -- Configure blink
 require("blink.cmp").setup({
     keymap = {
-        preset = 'enter',
+        preset = "enter",
         -- Bind tab and shift tab to scroll through completions
-        ['<S-Tab>'] = { 'select_prev', 'fallback' },
-        ['<Tab>'] = { 'select_next', 'fallback' },
+        ["<S-Tab>"] = { "select_prev", "fallback" },
+        ["<Tab>"] = { "select_next", "fallback" },
 
         -- Scroll up and down in documentation with Ctrl+u and Ctrl+d
-        ['<C-u>'] = { 'scroll_documentation_up' },
-        ['<C-d>'] = { 'scroll_documentation_down' },
+        ["<C-u>"] = { "scroll_documentation_up" },
+        ["<C-d>"] = { "scroll_documentation_down" },
     },
 
     completion = {
@@ -281,6 +285,7 @@ require("noice").setup({
             -- override markdown rendering
             ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
             ["vim.lsp.util.stylize_markdown"] = true,
+            ["vim.lsp.buf"] = false,
         }
     },
     views = {
@@ -310,13 +315,13 @@ require("snacks").setup {
     dashboard = {
         formats = {
             header = {
-                '░▒▓█▓▒░ ░▒▓████████▓▒░ ░▒▓████████▓▒░ ░▒▓████████▓▒░\n' ..
-                '░▒▓█▓▒░ ░▒▓█▓▒░        ░▒▓█▓▒░        ░▒▓█▓▒░       \n' ..
-                '░▒▓█▓▒░ ░▒▓█▓▒░        ░▒▓█▓▒░        ░▒▓█▓▒░       \n' ..
-                '░▒▓█▓▒░ ░▒▓██████▓▒░   ░▒▓██████▓▒░   ░▒▓██████▓▒░  \n' ..
-                '░▒▓█▓▒░ ░▒▓█▓▒░        ░▒▓█▓▒░        ░▒▓█▓▒░       \n' ..
-                '░▒▓█▓▒░ ░▒▓█▓▒░        ░▒▓█▓▒░        ░▒▓█▓▒░       \n' ..
-                '░▒▓█▓▒░ ░▒▓████████▓▒░ ░▒▓████████▓▒░ ░▒▓████████▓▒░',
+                "░▒▓█▓▒░ ░▒▓████████▓▒░ ░▒▓████████▓▒░ ░▒▓████████▓▒░\n" ..
+                "░▒▓█▓▒░ ░▒▓█▓▒░        ░▒▓█▓▒░        ░▒▓█▓▒░       \n" ..
+                "░▒▓█▓▒░ ░▒▓█▓▒░        ░▒▓█▓▒░        ░▒▓█▓▒░       \n" ..
+                "░▒▓█▓▒░ ░▒▓██████▓▒░   ░▒▓██████▓▒░   ░▒▓██████▓▒░  \n" ..
+                "░▒▓█▓▒░ ░▒▓█▓▒░        ░▒▓█▓▒░        ░▒▓█▓▒░       \n" ..
+                "░▒▓█▓▒░ ░▒▓█▓▒░        ░▒▓█▓▒░        ░▒▓█▓▒░       \n" ..
+                "░▒▓█▓▒░ ░▒▓████████▓▒░ ░▒▓████████▓▒░ ░▒▓████████▓▒░",
                 align = "center"
             }
         },
@@ -352,13 +357,13 @@ require("mason-lspconfig").setup()
 require("mason-lspconfig").setup_handlers {
     function(server_name)
         require("lspconfig")[server_name].setup {
-            capabilities = require('blink.cmp').get_lsp_capabilities()
+            capabilities = require("blink.cmp").get_lsp_capabilities()
         }
     end
 }
 
 -- Configure treesitter
-require('nvim-treesitter.configs').setup {
+require("nvim-treesitter.configs").setup {
     -- Allow async installation
     sync_install = false,
 
@@ -377,20 +382,19 @@ require('nvim-treesitter.configs').setup {
         additional_vim_regex_highlighting = false,
     },
 }
-
 -- Configure telescope
-require('telescope').setup {
+require("telescope").setup {
     defaults = {
         -- We shouldn't be searching here, this can slow down performance and bloat results
         file_ignore_patterns = { "node_modules", "target/" },
         -- Keybindings!
         mappings = {
             i = {
-                ['<Esc>'] = 'close',
-                ['<C-u>'] = false,
-                ['<C-d>'] = false,
-                ['<Tab>'] = require('telescope.actions').move_selection_next,
-                ['<S-Tab>'] = require('telescope.actions').move_selection_previous,
+                ["<Esc>"] = "close",
+                ["<C-u>"] = false,
+                ["<C-d>"] = false,
+                ["<Tab>"] = require("telescope.actions").move_selection_next,
+                ["<S-Tab>"] = require("telescope.actions").move_selection_previous,
             },
         },
     },
@@ -405,7 +409,7 @@ vim.g.lazydev_enabled = true
 vim.cmd.colorscheme "tokyonight"
 
 -- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
+vim.o.completeopt = "menuone,noselect"
 
 -- Enable sexy, 24-bit color
 vim.o.termguicolors = true
@@ -418,7 +422,7 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Sync yank with system clipboard
-vim.o.clipboard = 'unnamed,unnamedplus'
+vim.o.clipboard = "unnamed,unnamedplus"
 
 -- Show current line number
 vim.wo.number = true
@@ -435,7 +439,7 @@ vim.opt.shiftwidth = 0
 vim.diagnostic.config({ virtual_text = false })
 
 -- Disabe line-wrapping
-vim.cmd.set 'nowrap'
+vim.cmd.set "nowrap"
 
 -- Make scrolloff behavior mimic Helix
 vim.o.scrolloff = 5
@@ -453,82 +457,89 @@ vim.diagnostic.config({
 ---- Keybindings ----
 
 -- Remap redo to something actually same
-vim.keymap.set('n', 'U', vim.cmd.redo)
+vim.keymap.set("n", "U", vim.cmd.redo)
 
 -- Stop highlighting search after pressing "escape"
-vim.keymap.set('n', '<Esc>', function() vim.cmd 'noh' end)
+vim.keymap.set("n", "<Esc>", function() vim.cmd "noh" end)
 
 -- Toggle Snacks-explorer with Space + f
-vim.keymap.set('n', '<space>f', Snacks.explorer.open)
+vim.keymap.set("n", "<space>f", Snacks.explorer.open)
 
 -- Toggle terminal with Space + t
-vim.keymap.set('n', '<space>t', function() vim.cmd "ToggleTerm" end)
+vim.keymap.set("n", "<space>t", function() vim.cmd "ToggleTerm" end)
 
 -- Peek definition with Shift+K
-vim.keymap.set('n', 'K', function() require("noice.lsp").hover() end)
+vim.keymap.set("n", "K", function() require("noice.lsp").hover() end)
 
 -- Peek error/warning with Shift+J
-vim.keymap.set('n', 'J', vim.diagnostic.open_float)
+vim.keymap.set("n", "J", vim.diagnostic.open_float)
 
 -- Toggle lsp_lines
-vim.keymap.set('n', 'L', require("lsp_lines").toggle)
+vim.keymap.set("n", "L", require("lsp_lines").toggle)
 
 -- Go to definition
-vim.keymap.set('n', 'gd', vim.lsp.buf.definition)
+vim.keymap.set("n", "gd", vim.lsp.buf.definition)
 
 -- Go to references
-vim.keymap.set('n', 'gr', require("telescope.builtin").lsp_references)
+vim.keymap.set("n", "gr", require("telescope.builtin").lsp_references)
 
 -- LSP-aware rename
-vim.keymap.set('n', '<space>cr', vim.lsp.buf.rename)
+vim.keymap.set("n", "<space>cr", vim.lsp.buf.rename)
 
 -- Open LSP actions
-vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action)
+vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action)
 
 -- Search document symbols
-vim.keymap.set('n', '<space>ss', require("telescope.builtin").lsp_document_symbols)
+vim.keymap.set("n", "<space>ss", require("telescope.builtin").lsp_document_symbols)
 
 -- Search workspace symbols
-vim.keymap.set('n', '<space>sS', require("telescope.builtin").lsp_dynamic_workspace_symbols)
+vim.keymap.set("n", "<space>sS", require("telescope.builtin").lsp_dynamic_workspace_symbols)
 
 -- Search workspace diagnostics
-vim.keymap.set('n', '<leader>sD', require('telescope.builtin').diagnostics)
+vim.keymap.set("n", "<leader>sD", require("telescope.builtin").diagnostics)
 
 -- Search workspace via grep
-vim.keymap.set('n', '<space>sg', require("telescope.builtin").live_grep)
+vim.keymap.set("n", "<space>sg", require("telescope.builtin").live_grep)
 
 -- Search workspace files
-vim.keymap.set('n', '<space>sf', require("telescope.builtin").find_files)
+vim.keymap.set("n", "<space>sf", require("telescope.builtin").find_files)
 
 -- Search registers
-vim.keymap.set('n', '<space>sr', require("telescope.builtin").registers)
+vim.keymap.set("n", "<space>sr", require("telescope.builtin").registers)
 
 -- Search installed color schemes
-vim.keymap.set('n', '<space>sc', function()
+vim.keymap.set("n", "<space>sc", function()
     require("telescope.builtin").colorscheme({
         enable_preview = true,
     })
 end)
 
 -- Maps <Esc> to normal mode from the terminal
-vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]])
+vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]])
 
 ---- Custom Commands ----
 
 -- Creates the ":Format" command, that automatically formats the current buffer
 vim.api.nvim_create_user_command("Format", function()
-    vim.lsp.buf.format()
+    -- Loop through all LSP clients and check if formatting is supported
+    for _, client in ipairs(vim.lsp.get_clients({ bufnr = vim.api.nvim_get_current_buf() })) do
+        -- Only format if formatting is supported (prevents annoying vim.notify() call)
+        if client.server_capabilities.documentFormattingProvider == true then
+            vim.lsp.buf.format()
+            return
+        end
+    end
 end, {})
 
 -- Highlight on yank
-local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
-vim.api.nvim_create_autocmd('TextYankPost', {
+local highlight_group = vim.api.nvim_create_augroup("YankHighlight", { clear = true })
+vim.api.nvim_create_autocmd("TextYankPost", {
     callback = function()
         vim.highlight.on_yank()
     end,
     group = highlight_group,
-    pattern = '*',
+    pattern = "*",
 })
 
 ---- Format on write ----
-vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format()]]
+vim.cmd [[autocmd BufWritePre * silent Format]]
