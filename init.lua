@@ -29,7 +29,7 @@ require("lazy").setup({
     "EdenEast/nightfox.nvim",
 
     -- Evangelion theme
-    'nyngwang/nvimgelion',
+    "nyngwang/nvimgelion",
 
     -- Snacks, a collection of QoL plugins that add many features
     "folke/snacks.nvim",
@@ -58,7 +58,7 @@ require("lazy").setup({
     { 'folke/lazydev.nvim',            ft = "lua",                                opts = {} },
 
     -- Lualine, gives us a pretty status line
-    { 'nvim-lualine/lualine.nvim',     opts = {} },
+    { 'nvim-lualine/lualine.nvim' },
 
     -- Nvim-autopairs, automatically matches "{" with "}"
     { 'windwp/nvim-autopairs',         config = true },
@@ -101,11 +101,136 @@ require("lazy").setup({
             'rafamadriz/friendly-snippets',
         },
     },
+
+    -- Multiple cursors, VSCode-like multi-line editing
+    {
+        "brenton-leighton/multiple-cursors.nvim",
+        version = "*",
+        opts = {},
+        keys = {
+            { "<C-j>",         "<Cmd>MultipleCursorsAddDown<CR>",          mode = { "n", "x" },      desc = "Add cursor and move down" },
+            { "<C-k>",         "<Cmd>MultipleCursorsAddUp<CR>",            mode = { "n", "x" },      desc = "Add cursor and move up" },
+
+            { "<C-Up>",        "<Cmd>MultipleCursorsAddUp<CR>",            mode = { "n", "i", "x" }, desc = "Add cursor and move up" },
+            { "<C-Down>",      "<Cmd>MultipleCursorsAddDown<CR>",          mode = { "n", "i", "x" }, desc = "Add cursor and move down" },
+
+            { "<C-LeftMouse>", "<Cmd>MultipleCursorsMouseAddDelete<CR>",   mode = { "n", "i" },      desc = "Add or remove cursor" },
+
+            { "<Leader>m",     "<Cmd>MultipleCursorsAddVisualArea<CR>",    mode = { "x" },           desc = "Add cursors to the lines of the visual area" },
+
+            { "<Leader>a",     "<Cmd>MultipleCursorsAddMatches<CR>",       mode = { "n", "x" },      desc = "Add cursors to cword" },
+            { "<Leader>A",     "<Cmd>MultipleCursorsAddMatchesV<CR>",      mode = { "n", "x" },      desc = "Add cursors to cword in previous area" },
+
+            { "<Leader>d",     "<Cmd>MultipleCursorsAddJumpNextMatch<CR>", mode = { "n", "x" },      desc = "Add cursor and jump to next cword" },
+            { "<Leader>D",     "<Cmd>MultipleCursorsJumpNextMatch<CR>",    mode = { "n", "x" },      desc = "Jump to next cword" },
+
+            { "<Leader>l",     "<Cmd>MultipleCursorsLock<CR>",             mode = { "n", "x" },      desc = "Lock virtual cursors" },
+        },
+    },
+
+    -- Surround, enables comfy manipulation of surrounding pairs
+    { "kylechui/nvim-surround",   opts = {} },
 })
 
 
 ---- Plugin Setup ----
 
+-- Configure lualine
+require("lualine").setup({
+    options = {
+        component_separators = '',
+        section_separators = { left = '', right = '' },
+    },
+    sections = {
+        lualine_a = {
+            {
+                'mode',
+                icon = { "" },
+                separator = { left = '', right = '' },
+                padding = { left = 1, right = 0 },
+            }
+        },
+        lualine_b = {
+            'branch',
+            'diff',
+            {
+                'diagnostics',
+                separator = { left = '', right = '' },
+                padding = { left = 0, right = 1 }
+            },
+        },
+        lualine_c = {
+            {
+                '%=',
+                padding = 0,
+            },
+            {
+                '',
+            },
+            {
+
+                -- Fun little hack!
+                -- This displays some information regarding the most recently
+                -- recorded macro in the status line
+                function()
+                    local path = vim.fn.expand("%:t")
+
+                    local recording_reg = vim.fn.reg_recording()
+                    local macro_reg = vim.fn.reg_recorded()
+                    local exec_reg = vim.fn.reg_executing()
+
+                    if exec_reg ~= "" then
+                        return path .. " | executing @" .. exec_reg
+                    end
+
+                    if recording_reg ~= "" then
+                        return path .. " | recording @" .. recording_reg
+                    end
+
+                    if macro_reg ~= "" then
+                        return path .. " | @" .. macro_reg
+                    end
+
+                    return vim.fn.expand("%:t")
+                end,
+                separator = { left = '', right = '' },
+                padding = 0,
+                color = {
+                    fg = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "Normal" }).bg),
+                    bg = string.format("#%06x", vim.api.nvim_get_hl(0, { name = "Normal" }).fg),
+                }
+            },
+            { '' },
+        },
+        lualine_x = {},
+        lualine_y = {
+            {
+                'filetype',
+                separator = { left = '', right = '' },
+            },
+            'lsp_status',
+            {
+                'progress',
+                separator = { left = '', right = '' },
+                padding = { left = 1, right = 1 },
+            }
+        },
+        lualine_z = {
+            {
+                'location',
+                separator = { left = '', right = '' },
+                padding = { left = 0, right = 1 },
+            }
+        }
+    }
+})
+vim.opt.showmode = false
+vim.opt.fillchars = vim.tbl_extend('force', vim.opt.fillchars:get(), {
+    stl = '━',
+    stlnc = '━',
+})
+
+-- Configure blink
 require("blink.cmp").setup({
     keymap = {
         preset = 'enter',
@@ -136,47 +261,26 @@ require("blink.cmp").setup({
 
 })
 
+-- Configure noice
 require("noice").setup({
-    presets = {
-        bottom_search = false,         -- use a classic bottom cmdline for search
-        command_palette = true,        -- position the cmdline and popupmenu together
-        long_message_to_split = false, -- long messages will be sent to a split
-        inc_rename = false,            -- enables an input dialog for inc-rename.nvim
-    },
-
     lsp = {
-        documentation = {
-            opts = {
-                format = { "{message}" },
-                render = "nui",
-                replace = true,
-                win_options = {
-                    concealcursor = "n",
-                    conceallevel = 3
-                }
-            },
-            view = "hover"
+        -- Disable LSP progress indicator
+        progress = {
+            enabled = false,
         },
+        -- Prevent notification when trying to get LSP info with no running LSP
         hover = {
-            enabled = true,
-            opts = {},
-            silent = false
+            silent = true,
         },
         message = {
             enabled = true,
-            opts = {},
             view = "notify"
         },
         override = {
-            ["cmp.entry.get_documentation"] = false,
+            -- override markdown rendering
             ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-            ["vim.lsp.util.stylize_markdown"] = true
-        },
-    },
-    popupmenu = {
-        backend = "nui",
-        enabled = true,
-        kind_icons = true,
+            ["vim.lsp.util.stylize_markdown"] = true,
+        }
     },
     views = {
         -- Add rounded corner to LSP hover
@@ -292,6 +396,27 @@ require('telescope').setup {
     },
 }
 
+-- require("multiple-cursors.nvim").setup({
+--     keys = {
+--         { "<C-j>",         "<Cmd>MultipleCursorsAddDown<CR>",          mode = { "n", "x" },      desc = "Add cursor and move down" },
+--         { "<C-k>",         "<Cmd>MultipleCursorsAddUp<CR>",            mode = { "n", "x" },      desc = "Add cursor and move up" },
+--
+--         { "<C-Up>",        "<Cmd>MultipleCursorsAddUp<CR>",            mode = { "n", "i", "x" }, desc = "Add cursor and move up" },
+--         { "<C-Down>",      "<Cmd>MultipleCursorsAddDown<CR>",          mode = { "n", "i", "x" }, desc = "Add cursor and move down" },
+--
+--         { "<C-LeftMouse>", "<Cmd>MultipleCursorsMouseAddDelete<CR>",   mode = { "n", "i" },      desc = "Add or remove cursor" },
+--
+--         { "<Leader>m",     "<Cmd>MultipleCursorsAddVisualArea<CR>",    mode = { "x" },           desc = "Add cursors to the lines of the visual area" },
+--
+--         { "<Leader>a",     "<Cmd>MultipleCursorsAddMatches<CR>",       mode = { "n", "x" },      desc = "Add cursors to cword" },
+--         { "<Leader>A",     "<Cmd>MultipleCursorsAddMatchesV<CR>",      mode = { "n", "x" },      desc = "Add cursors to cword in previous area" },
+--
+--         { "<Leader>d",     "<Cmd>MultipleCursorsAddJumpNextMatch<CR>", mode = { "n", "x" },      desc = "Add cursor and jump to next cword" },
+--         { "<Leader>D",     "<Cmd>MultipleCursorsJumpNextMatch<CR>",    mode = { "n", "x" },      desc = "Jump to next cword" },
+--
+--         { "<Leader>l",     "<Cmd>MultipleCursorsLock<CR>",             mode = { "n", "x" },      desc = "Lock virtual cursors" },
+--     }
+-- })
 
 ---- Basic Configuration ----
 
@@ -395,7 +520,10 @@ vim.keymap.set('n', '<leader>sD', require('telescope.builtin').diagnostics)
 vim.keymap.set('n', '<space>sg', require("telescope.builtin").live_grep)
 
 -- Search workspace files
-vim.keymap.set('n', '<space>sf', require('telescope.builtin').find_files)
+vim.keymap.set('n', '<space>sf', require("telescope.builtin").find_files)
+
+-- Search registers
+vim.keymap.set('n', '<space>sr', require("telescope.builtin").registers)
 
 -- Search installed color schemes
 vim.keymap.set('n', '<space>sc', function()
@@ -413,6 +541,16 @@ vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]])
 vim.api.nvim_create_user_command("Format", function()
     vim.lsp.buf.format()
 end, {})
+
+-- Highlight on yank
+local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
+vim.api.nvim_create_autocmd('TextYankPost', {
+    callback = function()
+        vim.highlight.on_yank()
+    end,
+    group = highlight_group,
+    pattern = '*',
+})
 
 ---- Format on write ----
 vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format()]]
