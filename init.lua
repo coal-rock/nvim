@@ -147,16 +147,17 @@ require("lualine").setup({
                 'mode',
                 icon = { "" },
                 separator = { left = '', right = '' },
-                padding = { left = 1, right = 0 },
             }
         },
         lualine_b = {
             'branch',
-            'diff',
+            {
+                'diff',
+                separator = { left = '', right = '' },
+            },
             {
                 'diagnostics',
                 separator = { left = '', right = '' },
-                padding = { left = 0, right = 1 }
             },
         },
         lualine_c = {
@@ -223,10 +224,11 @@ require("lualine").setup({
         }
     }
 })
+
 vim.opt.showmode = false
 vim.opt.fillchars = vim.tbl_extend('force', vim.opt.fillchars:get(), {
-    stl = '━',
-    stlnc = '━',
+    stl = ' ',
+    stlnc = ' ',
 })
 
 -- Configure blink
