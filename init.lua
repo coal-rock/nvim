@@ -13,6 +13,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
         os.exit(1)
     end
 end
+
 vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
@@ -247,7 +248,17 @@ require("blink.cmp").setup({
         ["<C-u>"] = { "scroll_documentation_up" },
         ["<C-d>"] = { "scroll_documentation_down" },
     },
-
+    signature = {
+        -- Enable signature popup, we want to use this over
+        -- the default that noice provides, as it's currently
+        -- a little bit broken
+        enabled = true,
+        window = {
+            -- Add rounded borders to signature popup
+            border = "rounded",
+            show_documentation = true,
+        },
+    },
     completion = {
         documentation = {
             -- Automatically show documentation with 0ms of debounce
@@ -277,6 +288,9 @@ require("noice").setup({
         hover = {
             silent = true,
         },
+        signature = {
+            enabled = false,
+        },
         message = {
             enabled = true,
             view = "notify"
@@ -285,7 +299,7 @@ require("noice").setup({
             -- override markdown rendering
             ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
             ["vim.lsp.util.stylize_markdown"] = true,
-            ["vim.lsp.buf"] = false,
+            ["vim.lsp.buf"] = true,
         }
     },
     views = {
@@ -295,7 +309,7 @@ require("noice").setup({
                 style = "rounded",
             }
         },
-    },
+    }
 })
 
 -- Configure snacks
