@@ -20,6 +20,9 @@ vim.g.maplocalleader = "\\"
 
 ---- Plugin Installation ----
 require("lazy").setup({
+    -- Golf.vim, fun little game for learning vim
+    { 'vuciv/golf' },
+
     -- Automatically guess indentation width
     { "nmac427/guess-indent.nvim", opts = {} },
 
@@ -42,10 +45,10 @@ require("lazy").setup({
     "echasnovski/mini.nvim",
 
     -- -- Anyline, gives us animated indentation line
-    { "coal-rock/anyline.nvim",    opts = {} },
+    { "coal-rock/anyline.nvim",  opts = {} },
 
     -- ToggleTerm, nice quality of life wrapper for the default Neovim terminal
-    { "akinsho/toggleterm.nvim",   opts = {} },
+    { "akinsho/toggleterm.nvim", opts = {} },
 
     -- Pretty icons
     "nvim-tree/nvim-web-devicons",
