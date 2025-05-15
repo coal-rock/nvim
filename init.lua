@@ -44,8 +44,8 @@ require("lazy").setup({
     -- Mini, another collection of QoL plugins
     "echasnovski/mini.nvim",
 
-    -- -- Anyline, gives us animated indentation line
-    { "coal-rock/anyline.nvim",  opts = {} },
+    -- -- Indentmini, gives us indentation line
+    { "nvimdev/indentmini.nvim", opts = {} },
 
     -- ToggleTerm, nice quality of life wrapper for the default Neovim terminal
     { "akinsho/toggleterm.nvim", opts = {} },
